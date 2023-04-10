@@ -254,4 +254,61 @@ while not open_list == None:
         for action in action_set:
             current_child=child_explored(current_node, action[0],action[1]) 
 
+# backtracing the shortest path
+shortest_planned_path=[]
+check_this_node = goal_pose1[0]
+
+while check_this_node != start_pose:
+    current_child =  check_this_node
+    # shortest_planned_path.append((check_this_node))
+    check_this_node = (closed_list[current_child])[0]
+    rpms = (closed_list[current_child])[1]
+    shortest_planned_path.append((check_this_node, current_child, rpms))
+
+# shortest_planned_path.append((start_pose, (closed_list[None])[1]))
+shortest_planned_path.reverse()
+# print(shortest_planned_path)
+shortest_planned_path.append((goal_pose1[0], None, goal_pose1[1]))
+
+# print("\n\n", shortest_planned_path)
+
+with open('ros.txt', 'a') as f:
+    [f.write(str((item[0][0]/1000)-0.5) + ' ' + str((item[0][1]/1000)-1) + '\n') \
+     for item in shortest_planned_path]
+    # f.write(str((shortest_planned_path[-1][1][0]/1000)-0.5) + ' ' + str((shortest_planned_path[-1][1][1]/1000)-1)+ '\n')
+
+for i in range(0,len(shortest_planned_path)):
+    t = 0
+    r = 33
+    L = 160
+    dt = 0.1
+    Xn= shortest_planned_path[i][0][0]
+    Yn= shortest_planned_path[i][0][1]
+    # Thetan = 3.14 * current_parent[2] / 180
+    Thetan = np.radians(shortest_planned_path[i][0][2])
+
+    UL= shortest_planned_path[i][2][0]
+    UR= shortest_planned_path[i][2][1]
+
+    t = 0
+    while t<1:
+        t = t + dt
+        Xs = Xn
+        Ys = Yn
+        vel_x = 0.5*r * ((UL + UR)) * math.cos(Thetan)
+        vel_y = 0.5*r * ((UL + UR)) * math.sin(Thetan)
+        Xn = Xn + vel_x * dt
+        Yn = Yn + vel_y * dt
+
+        v = ((0.5*r * ((UL + UR)))/1000)
+
+        theta_dot = (r / L) * ((UR - UL))
+        Thetan += theta_dot * dt
+
+        omega = (theta_dot)
+
+        plt.plot([Xs, Xn], [Ys, Yn], color="orange", linewidth=5)
+
+plt.pause(0.001)
+
 plt.show()
