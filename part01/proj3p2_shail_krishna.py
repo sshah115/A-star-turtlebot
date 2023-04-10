@@ -69,12 +69,32 @@ def obstacle_check(node_c):
 
     return status
 
+def round_thresh(val):
+
+    if val % thresh_for_grid != 0:
+        val = np.round(val/thresh_for_grid)*thresh_for_grid
+    return val
+
 scaleFac = 5
 thresh_for_grid = 5
-obsClea = 110
+thresh = 5
+obstacle_real= int(round_thresh(float(input("\nEnter obstacle clearance: \n"))))
+radius_robot = 105
+obsClea = obstacle_real  + radius_robot
 canvas = genMap()
 
-node = [1500, 1000]
+home_x = 0
+home_y= 0
+home_theta = 45
+home_x+= 500
+home_y+= 1000
+
+goal_x = 5000
+goal_y = -500
+goal_x += 500
+goal_y += 1000
+
+node = [home_x, home_y]
 stat = obstacle_check(node)
 
 if stat:
