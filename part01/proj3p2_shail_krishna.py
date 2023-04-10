@@ -70,6 +70,7 @@ def obstacle_check(node_c):
     return status
 
 scaleFac = 5
+thresh_for_grid = 5
 obsClea = 110
 canvas = genMap()
 
