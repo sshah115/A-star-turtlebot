@@ -293,6 +293,8 @@ It can run by rosrun command too by following command:
 $ rosrun proj3 test.py
 ```
 
+rosrun ensures that the node stops and the turtlebot stops at target location. roslaunch might respawn the node. respawn='false' and required='true' are inculcated and tried but it respawns, however, it reaches the goal node.
+
 ### Video link
 
 Link - https://drive.google.com/file/d/19t6n0q_grLAJKlRcP5fGCxVoC1qBrdqF/view?usp=sharing
