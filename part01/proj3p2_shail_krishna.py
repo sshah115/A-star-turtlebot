@@ -88,6 +88,15 @@ def check_goal(current):
     else:
         return False
     
+def proximity(node):
+
+    node_in_action = copy.deepcopy(node)
+    
+    Xn=node_in_action[0]
+    Yn=node_in_action[1]
+
+    return not any(dist((Xn, Yn), (n[0], n[1])) <= 100 for n in closed_list.keys())
+    
 def child_explored(node, UL,UR):
 
     node_in_action = copy.deepcopy(node)
@@ -147,16 +156,16 @@ def child_explored(node, UL,UR):
         if v[int(round_thresh(updated_x)/thresh)][int(round_thresh(updated_y)/thresh)] == 0:
             v[int(round_thresh(updated_x)/thresh)][int(round_thresh(updated_y)/thresh)] = 1
             if current_child not in closed_list :
-
-                for i in range(0,(open_list.qsize())):
-                    if open_list.queue[i][3] == current_child and open_list.queue[i][0] > total_cost:
-                        open_list.queue[i][2] = current_parent
-                open_list.put((total_cost, c2c_moved, current_parent, current_child, (UL,UR)))     
-                for pt in range(len(clnVis)-1):
-                    plt.plot((clnVis[pt][0], clnVis[pt + 1][0]),(clnVis[pt][1], clnVis[pt + 1][1]), color="blue")
-                    # plt.pause(0.0001)
-                    # if pt % 144*12 == 0:
-                    #     plt.pause(0.0001)
+                if proximity(current_child):
+                    for i in range(0,(open_list.qsize())):
+                        if open_list.queue[i][3] == current_child and open_list.queue[i][0] > total_cost:
+                            open_list.queue[i][2] = current_parent
+                    open_list.put((total_cost, c2c_moved, current_parent, current_child, (UL,UR)))     
+                    for pt in range(len(clnVis)-1):
+                        plt.plot((clnVis[pt][0], clnVis[pt + 1][0]),(clnVis[pt][1], clnVis[pt + 1][1]), color="blue")
+                        # plt.pause(0.0001)
+                        # if pt % 144*12 == 0:
+                        #     plt.pause(0.0001)
 
 compare_with_this = 500  
 
