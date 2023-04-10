@@ -18,6 +18,7 @@ import math as math
 from math import dist
 import matplotlib.pyplot as plt
 import matplotlib.patches as patch
+import time
 
 # Function to generate map with obstacles using cv functions
 def genMap():
@@ -196,6 +197,7 @@ goal_pose = (goal_x, goal_y)
 rpm_1= 50 * ((2*np.pi)/60)
 rpm_2 = 100 * ((2*np.pi)/60)
 
+start = time.time()
 print("\nBe patient!!! I am computing the shortest path!! \n")
 
 action_set = [[0, rpm_1],[rpm_1, 0],[rpm_1, rpm_1],[0, rpm_2],[rpm_2, 0],[rpm_2, rpm_2],[rpm_1, rpm_2],[rpm_2, rpm_1]]
@@ -253,6 +255,10 @@ while not open_list == None:
         
         for action in action_set:
             current_child=child_explored(current_node, action[0],action[1]) 
+
+end = time.time()
+print(f'Time needed for the algorithm: {end - start}\n')
+print('\n')
 
 # backtracing the shortest path
 shortest_planned_path=[]
