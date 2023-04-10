@@ -44,6 +44,7 @@ def genMap():
   
     return cv.resize(arena, (int(6000/scaleFac),int(2000/scaleFac)))
 
+
 # Checking coordinates if it lies in obstacle space
 def obstacle_check(node_c):
     # This function will check if the points are okay, on border or
@@ -57,7 +58,7 @@ def obstacle_check(node_c):
 
     if yPt < int(2000/scaleFac) and xPt < int(6000/scaleFac):
 
-        print(f"The pixel value of coordinate {(node[0], node[1])} is: ", canvas[yPt, xPt])
+        # print(f"The pixel value of coordinate {(node[0], node[1])} is: ", canvas[yPt, xPt])
 
         if canvas[yPt, xPt][0] == 0 and canvas[yPt, xPt][1] == 0 and canvas[yPt, xPt][2] == 0:
             status = False
@@ -97,7 +98,8 @@ def proximity(node):
     Yn=node_in_action[1]
 
     return not any(dist((Xn, Yn), (n[0], n[1])) <= 100 for n in closed_list.keys())
-    
+
+        
 def child_explored(node, UL,UR):
 
     node_in_action = copy.deepcopy(node)
@@ -167,8 +169,8 @@ def child_explored(node, UL,UR):
                         # plt.pause(0.0001)
                         # if pt % 144*12 == 0:
                         #     plt.pause(0.0001)
-
-compare_with_this = 500  
+                                                        
+compare_with_this = 500         
 
 scaleFac = 5
 thresh_for_grid = 5
@@ -180,22 +182,55 @@ x_visited = []
 y_visited = []
 canvas = genMap()
 
-home_x = 0
-home_y= 0
-home_theta = 45
+#Getting home position
+home_x = round_thresh(float(input("Hey!! Where to start? Please enter home 'x' coordinate:  \n")))
+home_y = round_thresh(float(input("\nPlease enter home 'y' coordinate: \n")))
 home_x+= 500
 home_y+= 1000
+home_loc = (home_x, home_y)
+while obstacle_check(home_loc):
+    print("\nThe entered value is in the obstacle. Please enter new values\n")
+    home_x = round_thresh(float(input("\nHey!! Where to start? Please enter home 'x' coordinate:  \n")))
+    home_y = round_thresh(float(input("\nPlease enter home 'y' coordinate: \n")))
+    home_loc = (home_x, home_y)
+home_theta = int(input("\nGive home orientation:  \n"))
 
-goal_x = 1000
-goal_y = -500
+print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+
+# Getting Goal Position
+
+goal_x= round_thresh(float(input("\nNow give the goal 'x' coordinate \n")))
+goal_y = round_thresh(float(input("\nNow give the goal 'y' coordinate \n")))
 goal_x += 500
 goal_y += 1000
+goal_loc = (goal_x, goal_y)
+while obstacle_check(goal_loc):
+    print("\nThe entered value is in the obstacle. Please enter new values\n")
+    goal_x= round_thresh(float(input("\nNow give the goal 'x' coordinate \n")))
+    goal_y = round_thresh(float(input("\nNow give the goal 'y' coordinate \n")))
+    goal_loc = (goal_x, goal_y)
+    
+
+rpm_1 = round_thresh(float(input("\nEnter first possible RPM for the wheel: \n")))
+
+print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")  
+
+rpm_2 = round_thresh(float(input("\nEnter second possible RPM  for the wheel: \n")))
+
+print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")  
+
+# home_x = 0
+# home_y= 0
+# home_theta = 45
+
+# goal_x = 5000
+# goal_y = -500
 
 start_pose = (home_x, home_y, home_theta)
 goal_pose = (goal_x, goal_y)
 
-rpm_1= 50 * ((2*np.pi)/60)
-rpm_2 = 100 * ((2*np.pi)/60)
+rpm_1= rpm_1 * ((2*np.pi)/60)
+rpm_2 = rpm_2 * ((2*np.pi)/60)
 
 start = time.time()
 print("\nBe patient!!! I am computing the shortest path!! \n")
@@ -209,7 +244,7 @@ adam_node = (total_cost,c2c,(parent_pose),(start_pose),(0, 0))
 open_list = PriorityQueue()
 open_list.put(adam_node)
 
-closed_list = {}
+closed_list = {} 
 
 fig, ax = plt.subplots(figsize=(6,2.5))
 
@@ -315,6 +350,10 @@ for i in range(0,len(shortest_planned_path)):
 
         plt.plot([Xs, Xn], [Ys, Yn], color="orange", linewidth=5)
 
-plt.pause(0.001)
+end_circle = patch.Circle((goal_pose[0], goal_pose[1]), dist((Xn, Yn), goal_pose), linewidth=1, edgecolor='r', facecolor='None')
+ax.add_patch(end_circle)        
+# plt.pause(0.001)
+
+print(f"The goal is {dist((Xn, Yn), goal_pose)} mm away from last explored node")
 
 plt.show()
